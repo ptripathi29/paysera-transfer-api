@@ -1,0 +1,42 @@
+parameters:
+    transfer.max_amount: '%env(float:TRANSFER_MAX_AMOUNT)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\TransferService:
+        arguments:
+            $transferLogger: '@monolog.logger.transfer'
+            $auditLogger: '@monolog.logger.audit'
+            $maxTransferAmount: '%transfer.max_amount%'
+            $maxDeadlockRetries: 3
+
+    App\Service\IdempotencyService:
+        arguments:
+            $redis: '@App\Infrastructure\Redis\RedisClientInterface'
+            $ttlSeconds: 86400
+
+    App\Infrastructure\Redis\PredisClient:
+        arguments:
+            $redisUrl: '%env(REDIS_URL)%'
+
+    App\Infrastructure\Redis\RedisClientInterface: '@App\Infrastructure\Redis\PredisClient'
+
+    App\EventSubscriber\RequestContextSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\EventSubscriber\ExceptionSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Security\ApiUserProvider:
+        tags: ['security.user_provider']

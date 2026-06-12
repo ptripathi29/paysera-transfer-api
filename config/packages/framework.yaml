@@ -1,0 +1,19 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    http_method_override: false
+    handle_all_throwables: true
+    php_errors:
+        log: true
+    serializer:
+        enabled: true
+    property_info:
+        enabled: true
+    rate_limiter:
+        transfer_api:
+            policy: 'sliding_window'
+            limit: '%env(int:TRANSFER_RATE_LIMIT)%'
+            interval: '1 minute'
+
+when@test:
+    framework:
+        test: true

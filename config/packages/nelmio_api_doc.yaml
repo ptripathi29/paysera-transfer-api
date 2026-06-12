@@ -1,0 +1,19 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Paysera Transfer API
+            description: Secure fund transfer REST API
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                    description: 'Use POST /api/v1/auth/login to obtain a token, then click Authorize and enter: Bearer <token>'
+        security:
+            - Bearer: []
+    areas:
+        default:
+            path_patterns:
+                - ^/api/v1
